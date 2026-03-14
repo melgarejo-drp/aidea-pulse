@@ -1,0 +1,6 @@
+{
+  "name": "aidea-pulse",
+  "version": "1.0.0",
+  "description": "Daily AI + content intelligence radar for AIdea brand",
+  "engines": { "node": ">=18" }
+}
