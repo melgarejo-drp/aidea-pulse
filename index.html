@@ -173,7 +173,7 @@
   <div class="logo">AI<span>DEA</span> PULSE ⚡</div>
   <div class="header-right">
     <div id="fecha-badge">—</div>
-    <button class="btn" id="refresh-btn" onclick="loadBrief()">↻ GENERAR</button>
+    <button class="btn" id="refresh-btn" onclick="loadBrief(true)">↻ GENERAR NUEVO</button>
   </div>
 </header>
 
@@ -184,7 +184,7 @@
 
 <!-- BRIEF PANEL -->
 <div class="panel active" id="panel-brief">
-  <div id="loading"><div class="pulse-ring"></div><p>BUSCANDO TENDENCIAS...</p></div>
+  <div id="loading"><div class="pulse-ring"></div><p id="loading-msg">BUSCANDO BRIEF DE HOY...</p></div>
   <div id="error-box"></div>
   <div id="content" style="display:none">
     <div class="frase-banner">
@@ -334,28 +334,74 @@ function renderBrief(d, container) {
 }
 
 // ── Load brief ─────────────────────────────────────────
-async function loadBrief() {
+// forceNew=true → always call /api/brief (Tavily + Claude)
+// forceNew=false (default) → check /api/today first; generate only if nothing found today
+async function loadBrief(forceNew = false) {
   const btn = document.getElementById('refresh-btn');
-  btn.disabled = true; btn.textContent = '↻ GENERANDO...';
+  btn.disabled = true;
   document.getElementById('loading').style.display = 'flex';
   document.getElementById('content').style.display = 'none';
   document.getElementById('error-box').style.display = 'none';
+
   try {
-    const res  = await fetch('/api/brief');
-    const data = await res.json();
-    if (!res.ok || data.error) throw new Error(data.error || 'Error desconocido');
+    let data;
+
+    if (!forceNew) {
+      // Try to load today's cached brief from Notion
+      document.getElementById('loading-msg').textContent = 'BUSCANDO BRIEF DE HOY...';
+      btn.textContent = '↻ CARGANDO...';
+      const todayRes  = await fetch('/api/today');
+      const todayData = await todayRes.json();
+
+      if (todayData.found && todayData.brief) {
+        data = todayData.brief;
+        // Show "cached" badge on button
+        btn.textContent = '↻ GENERAR NUEVO';
+        showCachedBadge(data.generado_en);
+      }
+    }
+
+    if (!data) {
+      // Generate fresh
+      document.getElementById('loading-msg').textContent = 'GENERANDO TENDENCIAS...';
+      btn.textContent = '↻ GENERANDO...';
+      const res = await fetch('/api/brief');
+      data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || 'Error desconocido');
+      hideCachedBadge();
+      btn.textContent = '↻ GENERAR NUEVO';
+    }
+
     currentBrief = data;
     renderBrief(data);
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = 'block';
+
   } catch(e) {
     document.getElementById('loading').style.display = 'none';
     const eb = document.getElementById('error-box');
     eb.style.display = 'block';
-    eb.innerHTML = `❌ ${e.message}<br><br><button class="btn" onclick="loadBrief()" style="margin-top:12px">REINTENTAR</button>`;
+    eb.innerHTML = `❌ ${e.message}<br><br><button class="btn" onclick="loadBrief(true)" style="margin-top:12px">REINTENTAR</button>`;
+    btn.textContent = '↻ GENERAR NUEVO';
   } finally {
-    btn.disabled = false; btn.textContent = '↻ GENERAR';
+    btn.disabled = false;
   }
+}
+
+function showCachedBadge(isoDate) {
+  let badge = document.getElementById('cached-badge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'cached-badge';
+    badge.style.cssText = 'font-size:10px;color:#555;letter-spacing:2px;text-align:center;padding:8px 0 0;';
+    document.getElementById('content').prepend(badge);
+  }
+  const t = isoDate ? new Date(isoDate).toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit'}) : '';
+  badge.textContent = `📋 CARGADO DEL CACHÉ DE HOY — GENERADO A LAS ${t}`;
+}
+function hideCachedBadge() {
+  const b = document.getElementById('cached-badge');
+  if (b) b.remove();
 }
 
 // ── History ────────────────────────────────────────────
