@@ -17,170 +17,154 @@
     --text:    #f0f0f0;
     --dim:     #555;
   }
-
   * { margin:0; padding:0; box-sizing:border-box; }
-
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'Space Mono', monospace;
-    min-height: 100vh; padding: 0 0 80px;
-  }
+  body { background:var(--bg); color:var(--text); font-family:'Space Mono',monospace; min-height:100vh; padding:0 0 80px; }
 
   /* HEADER */
   header {
-    border-bottom: 1px solid var(--border);
-    padding: 24px 32px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; background: rgba(10,10,10,0.95);
-    backdrop-filter: blur(10px); z-index: 100;
+    border-bottom:1px solid var(--border); padding:20px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; background:rgba(10,10,10,0.97);
+    backdrop-filter:blur(10px); z-index:100;
   }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; }
+  .logo span { color:var(--accent); }
+  .header-right { display:flex; align-items:center; gap:12px; }
+  #fecha-badge { font-size:10px; color:var(--dim); letter-spacing:2px; text-transform:uppercase; }
 
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; }
-  .logo span { color: var(--accent); }
-
-  .header-right { display: flex; align-items: center; gap: 16px; }
-
-  #fecha-badge {
-    font-size: 10px; color: var(--dim); letter-spacing: 2px; text-transform: uppercase;
+  /* TABS */
+  .tabs { display:flex; border-bottom:1px solid var(--border); padding:0 32px; background:rgba(10,10,10,0.97); }
+  .tab {
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px;
+    padding:14px 20px; border:none; background:none; color:var(--dim);
+    cursor:pointer; border-bottom:2px solid transparent; transition:all .2s;
+    text-transform:uppercase;
   }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab:hover:not(.active) { color:#888; }
 
-  #refresh-btn {
-    background: var(--accent); color: #0a0a0a; border: none;
-    font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
-    padding: 8px 18px; border-radius: 4px; cursor: pointer;
-    letter-spacing: 2px; transition: opacity 0.15s;
+  /* BUTTONS */
+  .btn {
+    background:var(--accent); color:#0a0a0a; border:none;
+    font-family:'Space Mono',monospace; font-size:11px; font-weight:700;
+    padding:8px 16px; border-radius:4px; cursor:pointer;
+    letter-spacing:2px; transition:opacity .15s;
   }
-  #refresh-btn:hover { opacity: 0.8; }
-  #refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:hover { opacity:.8; }
+  .btn:disabled { opacity:.4; cursor:not-allowed; }
+  .btn-ghost {
+    background:none; border:1px solid var(--border); color:var(--dim);
+    font-family:'Space Mono',monospace; font-size:10px;
+    padding:5px 12px; border-radius:4px; cursor:pointer;
+    letter-spacing:1px; transition:all .15s;
+  }
+  .btn-ghost:hover { border-color:#555; color:var(--text); }
+
+  /* PANELS */
+  .panel { display:none; max-width:1100px; margin:0 auto; padding:28px 32px; }
+  .panel.active { display:block; }
 
   /* LOADING */
-  #loading {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; min-height: 60vh; gap: 20px;
-  }
+  #loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:55vh; gap:20px; }
+  .pulse-ring { width:56px; height:56px; border-radius:50%; border:3px solid transparent; border-top-color:var(--accent); animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #loading p { font-size:11px; color:var(--dim); letter-spacing:3px; }
+  #error-box { display:none; margin:40px auto; max-width:500px; background:#1a0000; border:1px solid #440000; border-radius:8px; padding:24px; text-align:center; font-size:12px; color:var(--pink); }
 
-  .pulse-ring {
-    width: 60px; height: 60px; border-radius: 50%;
-    border: 3px solid transparent;
-    border-top-color: var(--accent);
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  #loading p { font-size: 11px; color: var(--dim); letter-spacing: 3px; }
-
-  /* ERROR */
-  #error-box {
-    display: none; margin: 40px auto; max-width: 500px;
-    background: #1a0000; border: 1px solid #440000;
-    border-radius: 8px; padding: 24px; text-align: center;
-    font-size: 12px; color: var(--pink);
-  }
-
-  /* MAIN GRID */
-  #content { display: none; max-width: 1100px; margin: 0 auto; padding: 32px; }
-
-  /* FRASE DEL DÍA */
+  /* FRASE */
   .frase-banner {
-    border: 1px solid var(--border); border-left: 3px solid var(--accent);
-    border-radius: 8px; padding: 20px 24px; margin-bottom: 32px;
-    font-size: 15px; color: var(--accent); font-style: italic; line-height: 1.6;
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:8px; padding:18px 22px; margin-bottom:28px;
+    font-size:14px; color:var(--accent); font-style:italic; line-height:1.6;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
   }
 
-  /* SECTION TITLES */
+  /* SECTION */
   .section-title {
-    font-size: 10px; letter-spacing: 4px; color: var(--dim);
-    text-transform: uppercase; margin-bottom: 16px;
-    display: flex; align-items: center; gap: 8px;
+    font-size:10px; letter-spacing:4px; color:var(--dim);
+    text-transform:uppercase; margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
   }
-  .section-title::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
-
-  @media (max-width: 800px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    #content { padding: 20px; }
-    header { padding: 16px 20px; }
+  /* GRIDS */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:28px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px; }
+  @media(max-width:800px) {
+    .grid-2,.grid-3 { grid-template-columns:1fr; }
+    .panel { padding:18px; }
+    header,.tabs { padding-left:18px; padding-right:18px; }
   }
 
   /* CARDS */
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 20px;
-    transition: border-color 0.2s;
-  }
-  .card:hover { border-color: #333; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; transition:border-color .2s; position:relative; }
+  .card:hover { border-color:#2a2a2a; }
+  .card-tag { font-size:9px; letter-spacing:2px; color:var(--dim); text-transform:uppercase; margin-bottom:8px; }
+  .card h3 { font-size:13px; line-height:1.5; margin-bottom:7px; }
+  .card p  { font-size:11px; color:var(--dim); line-height:1.7; }
+  .card .highlight { color:var(--accent); font-size:11px; margin-top:7px; }
+  .card .sub { color:#333; font-size:10px; margin-top:5px; }
+  .card .copy-btn { position:absolute; top:12px; right:12px; opacity:0; transition:opacity .15s; }
+  .card:hover .copy-btn { opacity:1; }
 
-  .card-tag {
-    font-size: 9px; letter-spacing: 2px; color: var(--dim);
-    text-transform: uppercase; margin-bottom: 10px;
-  }
+  /* IG cards */
+  .card.instagram { border-left:2px solid var(--pink); }
+  .card.instagram .card-tag { color:var(--pink); }
+  .card.instagram .hook { font-size:14px; font-weight:700; line-height:1.4; margin-bottom:10px; border-left:2px solid var(--pink); padding-left:12px; }
 
-  .card h3 { font-size: 13px; line-height: 1.5; color: var(--text); margin-bottom: 8px; }
-  .card p  { font-size: 11px; color: var(--dim); line-height: 1.7; }
-  .card .highlight { color: var(--accent); font-size: 11px; margin-top: 8px; }
-  .card .sub { color: #444; font-size: 10px; margin-top: 6px; }
+  /* LI cards */
+  .card.linkedin { border-left:2px solid var(--blue); }
+  .card.linkedin .card-tag { color:var(--blue); }
+  .card.linkedin h3 { color:var(--blue); }
 
-  /* Instagram cards */
-  .card.instagram { border-left: 2px solid var(--pink); }
-  .card.instagram .card-tag { color: var(--pink); }
-  .card.instagram .hook {
-    font-size: 14px; color: var(--text); font-weight: 700;
-    line-height: 1.4; margin-bottom: 10px;
-    border-left: 2px solid var(--pink); padding-left: 12px;
-  }
+  /* badges */
+  .cta-badge { display:inline-block; background:#1a0a00; border:1px solid #3d1a00; border-radius:4px; padding:3px 9px; font-size:9px; color:#ff8c00; letter-spacing:1px; margin-top:7px; }
+  .fmt-badge { display:inline-block; background:#0d001a; border:1px solid #2d0044; border-radius:4px; padding:3px 9px; font-size:9px; color:#aa44ff; letter-spacing:1px; margin-top:7px; margin-right:6px; }
 
-  /* LinkedIn cards */
-  .card.linkedin { border-left: 2px solid var(--blue); }
-  .card.linkedin .card-tag { color: var(--blue); }
-  .card.linkedin h3 { color: var(--blue); }
+  /* STAT */
+  .stat-card { background:linear-gradient(135deg,#0d1a00,#111); border:1px solid #1a3300; border-radius:10px; padding:22px; margin-bottom:28px; display:flex; gap:22px; align-items:center; }
+  .stat-number { font-family:'Bebas Neue',sans-serif; font-size:50px; color:var(--accent); line-height:1; min-width:80px; text-align:center; }
+  .stat-info h4 { font-size:13px; margin-bottom:4px; }
+  .stat-info p  { font-size:11px; color:var(--dim); line-height:1.6; }
+  .stat-info .fuente { font-size:10px; color:#333; margin-top:6px; }
 
-  /* Stat card */
-  .stat-card {
-    background: linear-gradient(135deg, #0d1a00, #111);
-    border: 1px solid #1a3300; border-radius: 10px; padding: 24px;
-    margin-bottom: 32px; display: flex; gap: 24px; align-items: center;
-  }
-  .stat-number {
-    font-family: 'Bebas Neue', sans-serif; font-size: 52px;
-    color: var(--accent); line-height: 1; min-width: 80px; text-align: center;
-  }
-  .stat-info h4 { font-size: 13px; color: var(--text); margin-bottom: 4px; }
-  .stat-info p  { font-size: 11px; color: var(--dim); line-height: 1.6; }
-  .stat-info .fuente { font-size: 10px; color: #333; margin-top: 6px; }
+  /* SOURCES */
+  .sources { border-top:1px solid var(--border); padding-top:20px; margin-top:12px; }
+  .sources a { display:inline-block; font-size:10px; color:var(--dim); text-decoration:none; margin-right:14px; margin-bottom:5px; border-bottom:1px solid #222; padding-bottom:2px; transition:color .15s,border-color .15s; }
+  .sources a:hover { color:var(--text); border-color:#555; }
 
-  /* Sources */
-  .sources {
-    border-top: 1px solid var(--border); padding-top: 24px; margin-top: 16px;
-  }
-  .sources a {
-    display: inline-block; font-size: 10px; color: var(--dim);
-    text-decoration: none; margin-right: 16px; margin-bottom: 6px;
-    border-bottom: 1px solid #222; padding-bottom: 2px;
-    transition: color 0.15s, border-color 0.15s;
-  }
-  .sources a:hover { color: var(--text); border-color: #555; }
+  /* TOAST */
+  #toast { position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(20px); background:#1a2800; border:1px solid var(--accent); color:var(--accent); font-size:11px; letter-spacing:2px; padding:10px 22px; border-radius:6px; opacity:0; transition:all .3s; pointer-events:none; z-index:999; }
+  #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* CTA badge */
-  .cta-badge {
-    display: inline-block; background: #1a0a00; border: 1px solid #3d1a00;
-    border-radius: 4px; padding: 4px 10px; font-size: 9px;
-    color: #ff8c00; letter-spacing: 1px; margin-top: 8px;
+  /* HISTORIAL */
+  .history-empty { text-align:center; padding:60px 20px; color:var(--dim); font-size:12px; letter-spacing:2px; }
+  .history-list { display:flex; flex-direction:column; gap:12px; }
+  .history-item {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:18px 20px; cursor:pointer; transition:border-color .2s;
+    display:flex; align-items:center; justify-content:space-between;
   }
+  .history-item:hover { border-color:#333; }
+  .history-item .hi-fecha { font-size:12px; color:var(--text); }
+  .history-item .hi-frase { font-size:10px; color:var(--dim); margin-top:4px; font-style:italic; }
+  .history-item .hi-meta { font-size:10px; color:var(--dim); text-align:right; }
+  .history-item .hi-arrow { color:var(--dim); font-size:14px; margin-left:16px; }
 
-  /* Formato badge */
-  .fmt-badge {
-    display: inline-block; background: #0d001a; border: 1px solid #2d0044;
-    border-radius: 4px; padding: 4px 10px; font-size: 9px;
-    color: #aa44ff; letter-spacing: 1px; margin-top: 8px;
+  /* MODAL historial */
+  #hist-modal {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.88);
+    z-index:500; overflow-y:auto; padding:32px 16px;
   }
+  #hist-modal.open { display:flex; justify-content:center; }
+  #hist-modal-inner { background:var(--bg); border:1px solid var(--border); border-radius:12px; max-width:900px; width:100%; padding:28px; position:relative; }
+  #hist-modal-close { position:absolute; top:16px; right:16px; background:none; border:none; color:var(--dim); font-size:22px; cursor:pointer; }
+  #hist-modal-close:hover { color:var(--text); }
 
-  /* Timestamp */
-  #gen-time { font-size: 9px; color: #2a2a2a; letter-spacing: 2px; text-align: center; margin-top: 24px; }
+  #gen-time { font-size:9px; color:#2a2a2a; letter-spacing:2px; text-align:center; margin-top:20px; }
+
+  /* HISTORY loading */
+  #hist-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px; gap:16px; }
 </style>
 </head>
 <body>
@@ -188,141 +172,253 @@
 <header>
   <div class="logo">AI<span>DEA</span> PULSE ⚡</div>
   <div class="header-right">
-    <div id="fecha-badge">cargando...</div>
-    <button id="refresh-btn" onclick="loadBrief()">↻ ACTUALIZAR</button>
+    <div id="fecha-badge">—</div>
+    <button class="btn" id="refresh-btn" onclick="loadBrief()">↻ GENERAR</button>
   </div>
 </header>
 
-<div id="loading">
-  <div class="pulse-ring"></div>
-  <p>BUSCANDO TENDENCIAS Y GENERANDO IDEAS...</p>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('brief')">📊 Brief del día</button>
+  <button class="tab" id="hist-tab" onclick="switchTab('history')">📅 Historial</button>
 </div>
 
-<div id="error-box"></div>
-
-<div id="content">
-
-  <!-- Frase -->
-  <div class="frase-banner" id="frase"></div>
-
-  <!-- Stat -->
-  <div class="section-title">📊 DATO DEL DÍA</div>
-  <div class="stat-card" id="stat-card">
-    <div class="stat-number" id="stat-num">—</div>
-    <div class="stat-info">
-      <h4 id="stat-dato"></h4>
-      <p id="stat-uso"></p>
-      <div class="fuente" id="stat-fuente"></div>
+<!-- BRIEF PANEL -->
+<div class="panel active" id="panel-brief">
+  <div id="loading"><div class="pulse-ring"></div><p>BUSCANDO TENDENCIAS...</p></div>
+  <div id="error-box"></div>
+  <div id="content" style="display:none">
+    <div class="frase-banner">
+      <span id="frase"></span>
+      <button class="btn-ghost" onclick="copyText(document.getElementById('frase').textContent, 'Frase copiada')">copiar</button>
     </div>
+    <div class="section-title">📊 DATO DEL DÍA</div>
+    <div class="stat-card" id="stat-card">
+      <div class="stat-number" id="stat-num">—</div>
+      <div class="stat-info">
+        <h4 id="stat-dato"></h4>
+        <p id="stat-uso"></p>
+        <div class="fuente" id="stat-fuente"></div>
+      </div>
+    </div>
+    <div class="section-title">🔥 TENDENCIAS</div>
+    <div class="grid-3" id="tendencias-grid"></div>
+    <div class="section-title">📱 IDEAS PARA INSTAGRAM REELS</div>
+    <div class="grid-3" id="instagram-grid"></div>
+    <div class="section-title">💼 IDEAS PARA LINKEDIN</div>
+    <div class="grid-2" id="linkedin-grid"></div>
+    <div class="sources">
+      <div class="section-title">🔗 FUENTES</div>
+      <div id="sources-list"></div>
+    </div>
+    <div id="gen-time"></div>
   </div>
-
-  <!-- Tendencias -->
-  <div class="section-title">🔥 TENDENCIAS</div>
-  <div class="grid-3" id="tendencias-grid"></div>
-
-  <!-- Instagram -->
-  <div class="section-title">📱 IDEAS PARA INSTAGRAM REELS</div>
-  <div class="grid-3" id="instagram-grid"></div>
-
-  <!-- LinkedIn -->
-  <div class="section-title">💼 IDEAS PARA LINKEDIN</div>
-  <div class="grid-2" id="linkedin-grid"></div>
-
-  <!-- Sources -->
-  <div class="sources">
-    <div class="section-title">🔗 FUENTES</div>
-    <div id="sources-list"></div>
-  </div>
-
-  <div id="gen-time"></div>
 </div>
+
+<!-- HISTORY PANEL -->
+<div class="panel" id="panel-history">
+  <div id="hist-loading"><div class="pulse-ring"></div><p>CARGANDO HISTORIAL...</p></div>
+  <div id="hist-content" style="display:none">
+    <div class="section-title">📅 GENERACIONES ANTERIORES</div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div id="hist-modal">
+  <div id="hist-modal-inner">
+    <button id="hist-modal-close" onclick="closeHistModal()">✕</button>
+    <div id="hist-modal-body"></div>
+  </div>
+</div>
+
+<div id="toast">✓ COPIADO</div>
 
 <script>
-async function loadBrief() {
-  const btn = document.getElementById('refresh-btn');
-  btn.disabled = true;
-  btn.textContent = '↻ GENERANDO...';
-  document.getElementById('loading').style.display = 'flex';
-  document.getElementById('content').style.display  = 'none';
-  document.getElementById('error-box').style.display = 'none';
+// ── State ──────────────────────────────────────────────
+let currentBrief = null;
 
-  try {
-    const res  = await fetch('/api/brief');
-    const data = await res.json();
-
-    if (!res.ok || data.error) throw new Error(data.error || 'Error desconocido');
-
-    render(data);
-  } catch(e) {
-    document.getElementById('loading').style.display = 'none';
-    const eb = document.getElementById('error-box');
-    eb.style.display = 'block';
-    eb.innerHTML = `❌ ${e.message}<br><br><button onclick="loadBrief()" style="margin-top:12px;background:none;border:1px solid #440000;color:#ff2d78;font-family:inherit;font-size:11px;padding:8px 16px;cursor:pointer;border-radius:4px;">REINTENTAR</button>`;
-  } finally {
-    btn.disabled  = false;
-    btn.textContent = '↻ ACTUALIZAR';
+// ── Tab switcher ───────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  if (tab === 'brief') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('panel-brief').classList.add('active');
+  } else {
+    document.getElementById('hist-tab').classList.add('active');
+    document.getElementById('panel-history').classList.add('active');
+    loadHistory();
   }
 }
 
-function render(d) {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('content').style.display = 'block';
+// ── Toast ──────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = '✓ ' + msg.toUpperCase();
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
 
-  document.getElementById('fecha-badge').textContent = d.fecha || '';
-  document.getElementById('frase').textContent = `"${d.frase_del_dia}"`;
+// ── Copy ───────────────────────────────────────────────
+function copyText(text, label) {
+  navigator.clipboard.writeText(text).then(() => toast(label || 'copiado'));
+}
 
-  // Stat
-  const statDato = d.stat_del_dia?.dato || '';
-  const numMatch = statDato.match(/[\d,.]+%?/);
-  document.getElementById('stat-num').textContent  = numMatch ? numMatch[0] : '★';
-  document.getElementById('stat-dato').textContent  = statDato;
-  document.getElementById('stat-uso').textContent   = d.stat_del_dia?.uso || '';
-  document.getElementById('stat-fuente').textContent = `Fuente: ${d.stat_del_dia?.fuente || ''}`;
+// ── Render brief ───────────────────────────────────────
+function renderBrief(d, container) {
+  const root = container || document;
 
-  // Tendencias
-  const tGrid = document.getElementById('tendencias-grid');
-  tGrid.innerHTML = (d.tendencias || []).map(t => `
+  if (!container) {
+    document.getElementById('fecha-badge').textContent = d.fecha || '';
+    document.getElementById('frase').textContent = `"${d.frase_del_dia}"`;
+    const numMatch = (d.stat_del_dia?.dato||'').match(/[\d,.]+%?/);
+    document.getElementById('stat-num').textContent  = numMatch ? numMatch[0] : '★';
+    document.getElementById('stat-dato').textContent  = d.stat_del_dia?.dato || '';
+    document.getElementById('stat-uso').textContent   = d.stat_del_dia?.uso || '';
+    document.getElementById('stat-fuente').textContent = `Fuente: ${d.stat_del_dia?.fuente || ''}`;
+  }
+
+  const secTitle = (icon, txt) =>
+    `<div class="section-title">${icon} ${txt}</div>`;
+
+  const tendenciasHTML = (d.tendencias||[]).map(t => `
     <div class="card">
       <div class="card-tag">TENDENCIA</div>
       <h3>${t.titulo}</h3>
       <p>${t.por_que_importa}</p>
       <div class="highlight">${t.angulo_aidea}</div>
-    </div>
-  `).join('');
+      <button class="btn-ghost copy-btn" onclick="copyText('${(t.titulo+' — '+t.angulo_aidea).replace(/'/g,"\\'")}','Tendencia copiada')">⎘</button>
+    </div>`).join('');
 
-  // Instagram
-  const igGrid = document.getElementById('instagram-grid');
-  igGrid.innerHTML = (d.ideas_instagram || []).map(i => `
+  const igHTML = (d.ideas_instagram||[]).map(i => `
     <div class="card instagram">
-      <div class="card-tag">📱 REEL IDEA</div>
+      <div class="card-tag">📱 REEL</div>
       <div class="hook">"${i.hook}"</div>
       <p>${i.concepto}</p>
-      <div class="fmt-badge">${i.formato}</div>
-      <div class="cta-badge">CTA: ${i.cta}</div>
-    </div>
-  `).join('');
+      <div><span class="fmt-badge">${i.formato}</span><span class="cta-badge">CTA: ${i.cta}</span></div>
+      <button class="btn-ghost copy-btn" style="margin-top:10px;position:relative;opacity:1"
+        onclick="copyText('HOOK: ${i.hook.replace(/'/g,"\\'")}\\n\\n${i.concepto.replace(/'/g,"\\'")}\\n\\nCTA: ${i.cta.replace(/'/g,"\\'")}','Reel copiado')">⎘ Copiar</button>
+    </div>`).join('');
 
-  // LinkedIn
-  const liGrid = document.getElementById('linkedin-grid');
-  liGrid.innerHTML = (d.ideas_linkedin || []).map(l => `
+  const liHTML = (d.ideas_linkedin||[]).map(l => `
     <div class="card linkedin">
       <div class="card-tag">💼 LINKEDIN</div>
       <h3>${l.titular}</h3>
       <p>${l.angulo}</p>
       <div class="sub">${l.estructura}</div>
-    </div>
-  `).join('');
+      <button class="btn-ghost copy-btn" style="margin-top:10px;position:relative;opacity:1"
+        onclick="copyText('${l.titular.replace(/'/g,"\\'")}\\n\\n${l.angulo.replace(/'/g,"\\'")}\\n\\n${(l.estructura||'').replace(/'/g,"\\'")}','LinkedIn copiado')">⎘ Copiar</button>
+    </div>`).join('');
 
-  // Sources
-  document.getElementById('sources-list').innerHTML = (d.sources || [])
-    .map(s => `<a href="${s.url}" target="_blank" rel="noopener">${s.source}: ${s.title?.slice(0,40)}...</a>`)
-    .join('');
-
-  const gt = d.generado_en ? new Date(d.generado_en).toLocaleString('es-CO', {timeZone:'America/Bogota'}) : '';
-  document.getElementById('gen-time').textContent = `Generado: ${gt}`;
+  if (!container) {
+    document.getElementById('tendencias-grid').innerHTML = tendenciasHTML;
+    document.getElementById('instagram-grid').innerHTML  = igHTML;
+    document.getElementById('linkedin-grid').innerHTML   = liHTML;
+    document.getElementById('sources-list').innerHTML = (d.sources||[])
+      .map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.source}: ${s.title?.slice(0,40)}...</a>`).join('');
+    const gt = d.generado_en ? new Date(d.generado_en).toLocaleString('es-CO',{timeZone:'America/Bogota'}) : '';
+    document.getElementById('gen-time').textContent = `Generado: ${gt}`;
+  } else {
+    // Modal / historial rendering
+    container.innerHTML = `
+      <div style="margin-bottom:24px">
+        <div style="font-size:10px;color:var(--dim);letter-spacing:3px;margin-bottom:6px">BRIEF DEL DÍA</div>
+        <div style="font-size:18px;font-family:'Bebas Neue',sans-serif;color:var(--accent)">${d.fecha}</div>
+        <div style="margin-top:12px;font-style:italic;color:var(--accent);font-size:13px">"${d.frase_del_dia||d.frase||''}"</div>
+      </div>
+      ${secTitle('🔥','TENDENCIAS')}<div class="grid-3" style="margin-bottom:20px">${tendenciasHTML}</div>
+      ${secTitle('📱','INSTAGRAM REELS')}<div class="grid-3" style="margin-bottom:20px">${igHTML}</div>
+      ${secTitle('💼','LINKEDIN')}<div class="grid-2">${liHTML}</div>
+    `;
+  }
 }
 
-// Cargar al iniciar
+// ── Load brief ─────────────────────────────────────────
+async function loadBrief() {
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true; btn.textContent = '↻ GENERANDO...';
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('content').style.display = 'none';
+  document.getElementById('error-box').style.display = 'none';
+  try {
+    const res  = await fetch('/api/brief');
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Error desconocido');
+    currentBrief = data;
+    renderBrief(data);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    const eb = document.getElementById('error-box');
+    eb.style.display = 'block';
+    eb.innerHTML = `❌ ${e.message}<br><br><button class="btn" onclick="loadBrief()" style="margin-top:12px">REINTENTAR</button>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '↻ GENERAR';
+  }
+}
+
+// ── History ────────────────────────────────────────────
+let histLoaded = false;
+
+async function loadHistory() {
+  if (histLoaded) return;
+  document.getElementById('hist-loading').style.display = 'flex';
+  document.getElementById('hist-content').style.display = 'none';
+  try {
+    const res  = await fetch('/api/history');
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    renderHistory(data.entries || []);
+    histLoaded = true;
+  } catch(e) {
+    document.getElementById('hist-loading').innerHTML =
+      `<p style="color:var(--pink);font-size:12px">❌ ${e.message}</p>`;
+  }
+}
+
+function renderHistory(entries) {
+  document.getElementById('hist-loading').style.display = 'none';
+  document.getElementById('hist-content').style.display = 'block';
+  const list = document.getElementById('history-list');
+  if (!entries.length) {
+    list.innerHTML = '<div class="history-empty">SIN GENERACIONES AÚN — CREA TU PRIMER BRIEF</div>';
+    return;
+  }
+  list.innerHTML = entries.map((e, i) => `
+    <div class="history-item" onclick="openHistModal(${i})" data-idx="${i}">
+      <div>
+        <div class="hi-fecha">${e.fecha || '—'}</div>
+        <div class="hi-frase">"${(e.frase||'').slice(0,80)}..."</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="hi-meta">
+          ${e.tendencias?.length||0} tend · ${e.ideas_instagram?.length||0} reels<br>
+          ${e.generado_en ? new Date(e.generado_en).toLocaleString('es-CO',{timeZone:'America/Bogota',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : ''}
+        </div>
+        <span class="hi-arrow">›</span>
+      </div>
+    </div>`).join('');
+  window._histEntries = entries;
+}
+
+function openHistModal(idx) {
+  const e = window._histEntries?.[idx];
+  if (!e) return;
+  const body = document.getElementById('hist-modal-body');
+  renderBrief(e, body);
+  document.getElementById('hist-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeHistModal() {
+  document.getElementById('hist-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('hist-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('hist-modal')) closeHistModal();
+});
+
+// ── Init ───────────────────────────────────────────────
 loadBrief();
 </script>
 </body>
