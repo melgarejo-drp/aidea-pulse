@@ -1,8 +1,8 @@
 // AIdea Pulse — API: generate brief + save to Notion history
 
-const TAVILY_KEY    = process.env.TAVILY_API_KEY;
-const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-const NOTION_KEY    = process.env.NOTION_API_KEY;
+const TAVILY_KEY    = process.env.TAVILY_API_KEY || '';
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || '';
+const NOTION_KEY    = process.env.NOTION_API_KEY || '';
 const HISTORY_DB    = '323c8f76-5510-8125-b1a2-f39cdb57d1c1';
 
 async function searchTavily(query, maxResults = 5) {
@@ -21,6 +21,11 @@ async function searchTavily(query, maxResults = 5) {
 }
 
 async function generateWithClaude(prompt) {
+  if (!ANTHROPIC_KEY || ANTHROPIC_KEY.length < 10) {
+    console.error('ANTHROPIC_KEY missing or invalid:', ANTHROPIC_KEY ? 'present but short' : 'undefined');
+    throw new Error('ANTHROPIC_API_KEY not configured');
+  }
+  
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
