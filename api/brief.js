@@ -29,13 +29,16 @@ async function generateWithClaude(prompt) {
       'content-type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'claude-haiku-4-5',
-      max_tokens: 1800,
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2500,
       messages: [{ role: 'user', content: prompt }]
     })
   });
   const data = await res.json();
-  return data.content?.[0]?.text || '';
+  if (!data.content || !data.content[0]) {
+    throw new Error(`Claude error: ${data.error?.message || 'empty response'}`);
+  }
+  return data.content[0].text;
 }
 
 async function getRecentTrendTopics() {
@@ -54,28 +57,17 @@ async function getRecentTrendTopics() {
       })
     });
     const data = await notionRes.json();
-    const results = data.results || [];
-
     const topics = [];
-    for (const page of results) {
-      const raw = page.properties?.['Tendencias']?.rich_text?.[0]?.plain_text || '';
-      if (!raw) continue;
+    for (const page of data.results || []) {
+      const tendenciasText = page.properties?.Tendencias?.rich_text?.[0]?.plain_text || '{}';
       try {
-        const tendencias = JSON.parse(raw);
-        if (Array.isArray(tendencias)) {
-          for (const t of tendencias) {
-            if (t && typeof t === 'object' && t.titulo) {
-              topics.push(t.titulo);
-            } else if (typeof t === 'string') {
-              topics.push(t);
-            }
-          }
+        const parsed = JSON.parse(tendenciasText);
+        if (Array.isArray(parsed)) {
+          topics.push(...parsed.map(t => t.titulo || t.title).filter(Boolean));
         }
-      } catch {
-        // ignore parse errors for individual entries
-      }
+      } catch {}
     }
-    return topics;
+    return topics.slice(0, 10);
   } catch (e) {
     console.error('getRecentTrendTopics error:', e.message);
     return [];
@@ -85,7 +77,12 @@ async function getRecentTrendTopics() {
 async function saveToNotion(brief) {
   if (!NOTION_KEY) return;
   try {
-    const truncate = (str, n) => str && str.length > n ? str.slice(0, n) : (str || '');
+    const truncate = (str, n) => {
+      if (!str) return '';
+      const s = typeof str === 'string' ? str : JSON.stringify(str);
+      return s.length > n ? s.slice(0, n) : s;
+    };
+
     await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
       headers: {
@@ -107,7 +104,7 @@ async function saveToNotion(brief) {
         }
       })
     });
-  } catch(e) {
+  } catch (e) {
     console.error('Notion save error:', e.message);
   }
 }
@@ -124,12 +121,10 @@ export default async function handler(req, res) {
       timeZone: 'America/Bogota'
     });
 
-    // Fetch recent trend topics and search results in parallel
-    const [aiNews, contentNews, audiovisualNews, recentTopics] = await Promise.all([
+    const [aiNews, contentNews, audiovisualNews] = await Promise.all([
       searchTavily('inteligencia artificial noticias tendencias semana', 4),
       searchTavily('content creation AI tools creators 2026', 4),
-      searchTavily('produccion audiovisual IA herramientas tendencias', 3),
-      getRecentTrendTopics()
+      searchTavily('produccion audiovisual IA herramientas tendencias', 3)
     ]);
 
     const allResults = [
@@ -142,49 +137,52 @@ export default async function handler(req, res) {
       .map(r => `- ${r.title}: ${r.snippet || r.content?.slice(0, 150)}`)
       .join('\n');
 
-    // Build the avoid-topics block for the prompt
+    const recentTopics = await getRecentTrendTopics();
     const avoidBlock = recentTopics.length > 0
-      ? `\nTEMAS A EVITAR (ya cubiertos en los últimos 3 briefs, NO los repitas ni uses variaciones muy similares):\n${recentTopics.map(t => `- ${t}`).join('\n')}\n`
+      ? `\nTEMAS A EVITAR (ya cubiertos recientemente):\n${recentTopics.map(t => `- ${t}`).join('\n')}\n`
       : '';
 
-    const prompt = `Eres el estratega de contenido de AIdea, una marca personal de comunicación audiovisual e inteligencia artificial dirigida por Simón Melgarejo (Colombia). La marca habla a creativos, profesionales y entusiastas de IA en español.
+    const prompt = `Eres el estratega de contenido de AIdea, marca de IA y comunicación audiovisual de Simón Melgarejo (Colombia). Hablas a creativos y profesionales en español.
 
-Basándote en estas noticias y tendencias de hoy (${today}):
+Basándote en estas noticias y tendencias (${today}):
 ${newsContext}
 ${avoidBlock}
-Genera un brief de contenido diario completo y fresco. Prioriza tendencias y ángulos que NO hayan sido cubiertos recientemente. Si una tendencia reciente sigue siendo relevante, abórdala desde un ángulo completamente distinto o con nueva información.
 
-Responde ÚNICAMENTE con JSON válido con esta estructura exacta:
+Genera un brief ÚNICO y FRESCO. Evita exactamente los temas listados arriba.
+
+Responde SOLO con JSON válido, sin texto extra:
 {
-  "frase_del_dia": "frase inspiradora corta sobre IA y creatividad",
+  "frase_del_dia": "frase corta inspiradora en español",
   "tendencias": [
-    { "titulo": "titulo corto", "descripcion": "1-2 oraciones", "oportunidad": "cómo aprovecharla", "urgencia": "alta|media|baja" },
-    { "titulo": "...", "descripcion": "...", "oportunidad": "...", "urgencia": "..." },
-    { "titulo": "...", "descripcion": "...", "oportunidad": "...", "urgencia": "..." }
+    {"titulo": "...", "por_que_importa": "oración", "angulo_aidea": "ángulo único"},
+    {"titulo": "...", "por_que_importa": "...", "angulo_aidea": "..."},
+    {"titulo": "...", "por_que_importa": "...", "angulo_aidea": "..."}
   ],
   "ideas_instagram": [
-    { "formato": "Reel|Carrusel|Story", "titulo": "titulo del post", "hook": "primera línea gancho", "descripcion": "desarrollo breve" },
-    { "formato": "...", "titulo": "...", "hook": "...", "descripcion": "..." },
-    { "formato": "...", "titulo": "...", "hook": "...", "descripcion": "..." }
+    {"hook": "máx 10 palabras", "concepto": "2 líneas", "formato": "tipo video", "cta": "CTA"},
+    {"hook": "...", "concepto": "...", "formato": "...", "cta": "..."},
+    {"hook": "...", "concepto": "...", "formato": "...", "cta": "..."}
   ],
   "ideas_linkedin": [
-    { "tipo": "reflexion|caso_estudio|opinion|tutorial", "titulo": "titulo", "gancho": "primera oración", "estructura": "outline breve" },
-    { "tipo": "...", "titulo": "...", "gancho": "...", "estructura": "..." }
+    {"titular": "título", "angulo": "tesis", "estructura": "intro/desarrollo/cierre"},
+    {"titular": "...", "angulo": "...", "estructura": "..."}
   ],
-  "stat_del_dia": { "dato": "estadística impactante", "fuente": "fuente", "contexto": "por qué importa" }
+  "stat_del_dia": {"dato": "estadística", "fuente": "origen", "uso": "aplicación"}
 }`;
 
     const raw = await generateWithClaude(prompt);
-
-    // Extract JSON from Claude response
     const match = raw.match(/\{[\s\S]*\}/);
     if (!match) throw new Error('No JSON found in Claude response');
+
     const brief = JSON.parse(match[0]);
-
     brief.fecha = today;
-    brief.sources = allResults.slice(0, 5).map(r => ({ title: r.title, url: r.url }));
+    brief.sources = allResults.slice(0, 5).map(r => ({
+      title: r.title,
+      url: r.url,
+      source: (() => { try { return new URL(r.url).hostname.replace('www.',''); } catch { return r.url; }})()
+    }));
+    brief.generado_en = new Date().toISOString();
 
-    // Save to Notion (non-blocking)
     saveToNotion(brief).catch(e => console.error('saveToNotion failed:', e.message));
 
     res.status(200).json(brief);
